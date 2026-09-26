@@ -1,10 +1,14 @@
 package se331.lab.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import se331.lab.entity.AuctionItem;
-import java.util.List;
 
 public interface AuctionItemService {
-    List<AuctionItem> getAllAuctionItems();
-    List<AuctionItem> getAuctionItemsByDescription(String description);
-    List<AuctionItem> getAuctionItemsBySuccessfulBidLessThan(Double value);
+    Integer getAuctionItemSize();
+    Page<AuctionItem> getAuctionItems(Integer perPage, Integer page);
+    AuctionItem getAuctionItem(Long id);
+    AuctionItem save(AuctionItem auctionItem);
+    Page<AuctionItem> getAuctionItems(String description, Pageable pageable);
+    Page<AuctionItem> getAuctionItemsBySuccessfulBidLessThan(Double value, Pageable pageable);
 }

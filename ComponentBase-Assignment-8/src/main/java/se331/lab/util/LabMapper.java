@@ -9,10 +9,17 @@ import java.util.List;
 @Mapper
 public interface LabMapper {
     LabMapper INSTANCE = Mappers.getMapper(LabMapper.class);
+    
     EventDTO getEventDto(Event event);
     List<EventDTO> getEventDto(List<Event> events);
     OrganizerDTO getOrganizerDto(Organizer organizer);
     List<OrganizerDTO> getOrganizerDto(List<Organizer> organizers);
     ParticipantDTO getParticipantDto(Participant participant);
     List<ParticipantDTO> getParticipantDto(List<Participant> participants);
+
+    AuctionItemDTO getAuctionItemDto(AuctionItem auctionItem);
+    List<AuctionItemDTO> getAuctionItemDtoList(List<AuctionItem> auctionItems);
+
+    BidDTO getBidDto(Bid bid);
+    List<BidDTO> getBidDtoList(List<Bid> bids);
 }

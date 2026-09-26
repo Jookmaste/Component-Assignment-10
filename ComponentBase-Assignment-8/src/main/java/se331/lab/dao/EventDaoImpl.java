@@ -1,7 +1,6 @@
 package se331.lab.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,11 +9,10 @@ import org.springframework.stereotype.Repository;
 import se331.lab.entity.Event;
 import se331.lab.repository.EventRepository;
 
-@Primary
 @Profile("db")
 @Repository
 @RequiredArgsConstructor
-public class EventDaoDbImpl implements EventDao {
+public class EventDaoImpl implements EventDao {
     final EventRepository eventRepository;
     @Override
     public Integer getEventSize() {
@@ -38,6 +36,6 @@ public class EventDaoDbImpl implements EventDao {
 
     @Override
     public Page<Event> getEvents(String title, Pageable page) {
-        return eventRepository.findByTitleIgnoreCaseContainingOrDescriptionIgnoreCaseContainingOrOrganizer_NameIgnoreCaseContaining(title, title, title, page);
+        return eventRepository.findByTitleContainingOrDescriptionContaining(title, title, page);
     }
 }

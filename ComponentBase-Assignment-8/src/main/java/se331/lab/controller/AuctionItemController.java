@@ -1,33 +1,54 @@
 package se331.lab.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se331.lab.entity.AuctionItem;
+import se331.lab.entity.AuctionItemDTO;
 import se331.lab.service.AuctionItemService;
-
-import java.util.List;
+import se331.lab.util.LabMapper;
 
 @CrossOrigin
 @RestController
 @RequiredArgsConstructor
 public class AuctionItemController {
-    private final AuctionItemService auctionItemService;
+    final AuctionItemService auctionItemService;
 
-    // ดึงข้อมูลทั้งหมด หรือค้นหาด้วย description (ข้อ 3.2)
     @GetMapping("/auction-items")
-    public ResponseEntity<List<AuctionItem>> getAuctionItems(
-            @RequestParam(required = false) String description) {
+    public ResponseEntity<?> getAuctionItems(
+            @RequestParam(value = "_limit", defaultValue = "3") Integer perPage,
+            @RequestParam(value = "_page", defaultValue = "1") Integer page,
+            @RequestParam(value = "description", required = false) String description) {
+        
+        Page<AuctionItem> pageOutput;
         if (description != null && !description.isEmpty()) {
-            return ResponseEntity.ok(auctionItemService.getAuctionItemsByDescription(description));
+            pageOutput = auctionItemService.getAuctionItems(description, PageRequest.of(page - 1, perPage));
+        } else if (perPage != null && page != null) {
+            pageOutput = auctionItemService.getAuctionItems(perPage, page - 1);
+        } else {
+            pageOutput = auctionItemService.getAuctionItems(3, 0); // ค่าเริ่มต้น
         }
-        return ResponseEntity.ok(auctionItemService.getAllAuctionItems());
+
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("x-total-count", String.valueOf(pageOutput.getTotalElements()));
+        
+        return new ResponseEntity<>(
+                LabMapper.INSTANCE.getAuctionItemDtoList(pageOutput.getContent()), 
+                responseHeaders, 
+                HttpStatus.OK
+        );
     }
 
-    // ค้นหา AuctionItem ที่ successfulBid น้อยกว่าค่าที่ระบุ (ข้อ 3.3)
-    @GetMapping("/auction-items/filter-bid")
-    public ResponseEntity<List<AuctionItem>> getBySuccessfulBidLessThan(
-            @RequestParam Double value) {
-        return ResponseEntity.ok(auctionItemService.getAuctionItemsBySuccessfulBidLessThan(value));
+    @GetMapping("/auction-items/{id}")
+    public ResponseEntity<?> getAuctionItem(@PathVariable("id") Long id) {
+        AuctionItem output = auctionItemService.getAuctionItem(id);
+        if (output != null) {
+            return ResponseEntity.ok(LabMapper.INSTANCE.getAuctionItemDto(output));
+        }
+        return ResponseEntity.notFound().build();
     }
 }
