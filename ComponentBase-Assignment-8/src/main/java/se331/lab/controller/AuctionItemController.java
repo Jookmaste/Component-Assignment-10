@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se331.lab.entity.AuctionItem;
-import se331.lab.entity.AuctionItemDTO;
+
 import se331.lab.service.AuctionItemService;
 import se331.lab.util.LabMapper;
 
@@ -50,5 +50,23 @@ public class AuctionItemController {
             return ResponseEntity.ok(LabMapper.INSTANCE.getAuctionItemDto(output));
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/auction-items-by-bid-less-than")
+    public ResponseEntity<?> getAuctionItemsByBidLessThan(
+            @RequestParam("value") Double value,
+            @RequestParam(value = "_limit", defaultValue = "3") Integer perPage,
+            @RequestParam(value = "_page", defaultValue = "1") Integer page) {
+        
+        Page<AuctionItem> pageOutput = auctionItemService.getAuctionItemsBySuccessfulBidLessThan(value, PageRequest.of(page - 1, perPage));
+
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("x-total-count", String.valueOf(pageOutput.getTotalElements()));
+        
+        return new ResponseEntity<>(
+                LabMapper.INSTANCE.getAuctionItemDtoList(pageOutput.getContent()), 
+                responseHeaders, 
+                HttpStatus.OK
+        );
     }
 }
