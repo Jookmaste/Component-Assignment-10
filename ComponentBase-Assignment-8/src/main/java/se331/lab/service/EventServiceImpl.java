@@ -12,8 +12,6 @@ import se331.lab.dao.OrganizerDao;
 import se331.lab.entity.Event;
 import se331.lab.entity.Organizer;
 
-import java.util.List;
-
 @Repository
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService{

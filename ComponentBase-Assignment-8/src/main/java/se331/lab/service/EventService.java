@@ -4,8 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import se331.lab.entity.Event;
 
-import java.util.List;
-
 public interface EventService {
     Integer getEventSize();
     Page<Event> getEvents(Integer perPage, Integer page);

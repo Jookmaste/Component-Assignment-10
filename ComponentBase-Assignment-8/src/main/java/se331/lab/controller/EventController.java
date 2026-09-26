@@ -1,6 +1,5 @@
 package se331.lab.controller;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,8 +11,6 @@ import org.springframework.web.server.ResponseStatusException;
 import se331.lab.entity.Event;
 import se331.lab.service.EventService;
 import se331.lab.util.LabMapper;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
